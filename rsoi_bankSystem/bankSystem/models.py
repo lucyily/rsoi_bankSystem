@@ -12,6 +12,9 @@ class City(models.Model):
         verbose_name = "Город"
         verbose_name_plural = "Города"
 
+    def __str__(self): 
+        return self.name
+
 
 class Sex(models.Model):
     name = models.CharField(max_length=40, verbose_name="Пол")
@@ -19,6 +22,9 @@ class Sex(models.Model):
     class Meta:
         verbose_name = "Пол"
         verbose_name_plural = "Пол"
+
+    def __str__(self): 
+        return self.name
 
 
 class Status(models.Model):
@@ -28,6 +34,9 @@ class Status(models.Model):
         verbose_name = "Семейной положение"
         verbose_name_plural = "Семейные положения"
 
+    def __str__(self):
+        return self.status
+
 
 class Citizenship(models.Model):
     country_name = models.CharField(max_length=60, verbose_name="Гражданство")
@@ -35,6 +44,9 @@ class Citizenship(models.Model):
     class Meta:
         verbose_name = "Гражданство"
         verbose_name_plural = "Гражданства"
+
+    def __str__(self):
+        return self.country_name
 
 
 class Disability(models.Model):
@@ -44,6 +56,9 @@ class Disability(models.Model):
         verbose_name = "Инвалидность"
         verbose_name_plural = "Инвалидности"
 
+    def __str__(self):
+        return self.type_of_disability
+
 
 class Pensioner(models.Model):
     pensioner = models.CharField(max_length=5, verbose_name="Пенсионер")
@@ -51,6 +66,9 @@ class Pensioner(models.Model):
     class Meta:
         verbose_name = "Пенсионер"
         verbose_name_plural = "Пенсионер"
+
+    def __str__(self):
+        return self.pensioner
 
 
 class Reservist(models.Model):
@@ -60,6 +78,8 @@ class Reservist(models.Model):
         verbose_name = "Военнообязанный"
         verbose_name_plural = "Военнообязанный"
 
+    def __str__(self):
+        return self.status
 
 
 # Create your models here.
