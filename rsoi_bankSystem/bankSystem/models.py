@@ -5,6 +5,63 @@ from django.utils import timezone
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 
+class City(models.Model):
+    name = models.CharField(max_length=40, verbose_name="Название")
+
+    class Meta:
+        verbose_name = "Город"
+        verbose_name_plural = "Города"
+
+
+class Sex(models.Model):
+    name = models.CharField(max_length=40, verbose_name="Пол")
+
+    class Meta:
+        verbose_name = "Пол"
+        verbose_name_plural = "Пол"
+
+
+class Status(models.Model):
+    status = models.TextField(max_length=100, verbose_name="Семейной положение")
+
+    class Meta:
+        verbose_name = "Семейной положение"
+        verbose_name_plural = "Семейные положения"
+
+
+class Citizenship(models.Model):
+    country_name = models.CharField(max_length=60, verbose_name="Гражданство")
+
+    class Meta:
+        verbose_name = "Гражданство"
+        verbose_name_plural = "Гражданства"
+
+
+class Disability(models.Model):
+    type_of_disability = models.CharField(max_length=60, verbose_name="Вид инвалидности")
+
+    class Meta:
+        verbose_name = "Инвалидность"
+        verbose_name_plural = "Инвалидности"
+
+
+class Pensioner(models.Model):
+    pensioner = models.CharField(max_length=5, verbose_name="Пенсионер")
+
+    class Meta:
+        verbose_name = "Пенсионер"
+        verbose_name_plural = "Пенсионер"
+
+
+class Reservist(models.Model):
+    status = models.CharField(max_length=5, verbose_name="Военнообязанный")
+
+    class Meta:
+        verbose_name = "Военнообязанный"
+        verbose_name_plural = "Военнообязанный"
+
+
+
 # Create your models here.
 class Customer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name="Клиент")
@@ -33,59 +90,3 @@ class Customer(models.Model):
 
     def __str__(self):
         return 'ФИО: {0} {1} {2}'.format( self.first_name, self.middle_name, self.surname)
-
-
-class City(models.Model):
-    name = models.CharField(max_length=40, verbose_name="Название")
-
-    class Meta:
-        verbose_name = "Город"
-        verbose_name_plural = "Города"
-
-
-class Sex(models.Model):
-    name = models.CharField(max_length=40, verbose_name="Пол")
-
-    class Meta:
-        verbose_name = "Пол"
-        verbose_name_plural = "Пол"
-
-
-class Status(models.Model):
-    status = models.TextField(max_length=100, verbose_name="Семейной положение")
-
-    class Meta:
-        verbose_name = "Семейной положение"
-        verbose_name_plural = "Семейные положения"
-
-
-class Citizenship(object):
-    country_name = models.CharField(max_length=60, verbose_name="Гражданство")
-
-    class Meta:
-        verbose_name = "Гражданство"
-        verbose_name_plural = "Гражданства"
-
-
-class Disability(object):
-    type_of_disability = models.CharField(max_length=60, verbose_name="Вид инвалидности")
-
-    class Meta:
-        verbose_name = "Инвалидность"
-        verbose_name_plural = "Инвалидности"
-
-
-class Pensioner(object):
-    pensioner = models.CharField(max_length=5, verbose_name="Пенсионер")
-
-    class Meta:
-        verbose_name = "Пенсионер"
-        verbose_name_plural = "Пенсионер"
-
-
-class Reservist(object):
-    status = models.CharField(max_length=5, verbose_name="Военнообязанный")
-
-    class Meta:
-        verbose_name = "Военнообязанный"
-        verbose_name_plural = "Военнообязанный"
