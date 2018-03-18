@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 import datetime
 from django.utils import timezone
 from django.core.validators import MinValueValidator, MaxValueValidator
+from djmoney.models.fields import MoneyField
 
 
 class City(models.Model):
@@ -79,6 +80,7 @@ class Customer(models.Model):
     disability = models.ForeignKey('Disability', verbose_name = "Инвалидность", on_delete=models.CASCADE)
     pensioner  = models.BooleanField(verbose_name = "Пенсионер", default=False)
     reservist  = models.BooleanField(verbose_name = "Военнообязанный", default=False)
+    month_income = MoneyField(max_digits=10, decimal_places=2, default_currency='BYN', default=0)
 
 
 
