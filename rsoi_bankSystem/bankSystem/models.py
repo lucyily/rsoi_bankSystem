@@ -60,28 +60,6 @@ class Disability(models.Model):
         return self.type_of_disability
 
 
-class Pensioner(models.Model):
-    pensioner = models.CharField(max_length=5, verbose_name="Пенсионер")
-
-    class Meta:
-        verbose_name = "Пенсионер"
-        verbose_name_plural = "Пенсионер"
-
-    def __str__(self):
-        return self.pensioner
-
-
-class Reservist(models.Model):
-    status = models.CharField(max_length=5, verbose_name="Военнообязанный")
-
-    class Meta:
-        verbose_name = "Военнообязанный"
-        verbose_name_plural = "Военнообязанный"
-
-    def __str__(self):
-        return self.status
-
-
 # Create your models here.
 class Customer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name="Клиент")
@@ -99,8 +77,8 @@ class Customer(models.Model):
     status = models.ForeignKey('Status', verbose_name = "Семейное положение", on_delete=models.CASCADE)
     citizenship = models.ForeignKey('Citizenship', verbose_name = "Гражданство", on_delete=models.CASCADE)
     disability = models.ForeignKey('Disability', verbose_name = "Инвалидность", on_delete=models.CASCADE)
-    pensioner  = models.ForeignKey('Pensioner', verbose_name = "Пенсионер", on_delete=models.CASCADE)
-    reservist  = models.ForeignKey('Reservist', verbose_name = "Военнообязанный", on_delete=models.CASCADE)
+    pensioner  = models.BooleanField(verbose_name = "Пенсионер", default=False)
+    reservist  = models.BooleanField(verbose_name = "Военнообязанный", default=False)
 
 
 
