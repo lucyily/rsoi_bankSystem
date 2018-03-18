@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'deposits.apps.DepositsConfig',
     'bankSystem.apps.BanksystemConfig',
     'django.contrib.admin',
     'django.contrib.auth',
