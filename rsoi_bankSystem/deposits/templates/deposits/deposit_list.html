@@ -1,0 +1,12 @@
+<h1>Депозиты</h1>
+<ul>	
+	{% for deposit in object_list %}
+		<li>
+			<div><a href="{%url 'deposits:deposit-details' pk=deposit.pk %}">Подробности</a></div>
+			<div>Вид депозита - {{ deposit.type }}</div>
+<!-- пропиши йопта тут инфу о депозитах краткую -->
+		</li>
+	{% empty %}
+		<li>No deposits yet.</li>
+	{% endfor %}
+</ul>

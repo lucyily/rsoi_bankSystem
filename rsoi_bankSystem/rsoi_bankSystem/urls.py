@@ -20,5 +20,6 @@ from django.conf import settings
 
 urlpatterns = [
     path('', include(('bankSystem.urls', 'bankSystem'))),
+    path('deposits/', include(('deposits.urls', 'deposits'))),
     path('admin/', admin.site.urls),
 ]
