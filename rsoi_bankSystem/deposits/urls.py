@@ -5,5 +5,6 @@ from . import views
 urlpatterns = [
     path('', views.Index.as_view(), name='index'),
     path('deposit-list/', views.DepositListView.as_view(), name='deposit-list'),
-    path('deposit-list/<slug:pk>/', views.DepositDetailView.as_view(), name='deposit-details')
+    path('deposit-list/<slug:pk>/', views.DepositDetailView.as_view(), name='deposit-details'),
+    path('create-contract/', views.ContractCreate.as_view(), name='create-contract'),
 ]
