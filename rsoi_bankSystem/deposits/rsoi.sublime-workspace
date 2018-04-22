@@ -1,0 +1,727 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"_",
+				"_transaction_chain"
+			],
+			[
+				"bun",
+				"bank_fund_acc"
+			],
+			[
+				"cas",
+				"cashbox_acc"
+			],
+			[
+				"cus",
+				"customer_acc"
+			],
+			[
+				"cah",
+				"cashbox_acc"
+			],
+			[
+				"cu",
+				"customer_acc"
+			],
+			[
+				"ca",
+				"cashbox_acc"
+			],
+			[
+				"form",
+				"form_valid"
+			],
+			[
+				"c",
+				"contract"
+			],
+			[
+				"Dep",
+				"DepositAdmin"
+			],
+			[
+				"so",
+				"source_acc"
+			],
+			[
+				"d",
+				"default"
+			],
+			[
+				"Ci",
+				"citizenship"
+			],
+			[
+				"a",
+				"admin"
+			],
+			[
+				"font-s",
+				"font-size"
+			],
+			[
+				"ad",
+				"adding_quant"
+			],
+			[
+				"qua",
+				"quantity"
+			],
+			[
+				"ty",
+				"type_of_post"
+			],
+			[
+				"pa",
+				"parametrize"
+			],
+			[
+				"for",
+				"Form"
+			],
+			[
+				"ra",
+				"radio_button"
+			],
+			[
+				"s",
+				"sum"
+			],
+			[
+				"su",
+				"sum"
+			],
+			[
+				"co",
+				"count_products"
+			],
+			[
+				"p",
+				"p2"
+			],
+			[
+				"VIp",
+				"VIPUser"
+			],
+			[
+				"m",
+				"mob_number"
+			],
+			[
+				"i",
+				"imprtr"
+			],
+			[
+				"S",
+				"SupplierVisitor"
+			],
+			[
+				"pr",
+				"print"
+			],
+			[
+				"ge",
+				"get_child"
+			],
+			[
+				"g",
+				"get_info"
+			],
+			[
+				"ps",
+				"pshelf"
+			],
+			[
+				"M",
+				"MachineDisk"
+			],
+			[
+				"P",
+				"ProductShelf"
+			],
+			[
+				"ma",
+				"material"
+			],
+			[
+				"__",
+				"__init__"
+			],
+			[
+				"o",
+				"object"
+			],
+			[
+				"product",
+				"product_counter"
+			],
+			[
+				"do",
+				"document_posting"
+			],
+			[
+				"po",
+				"posting"
+			],
+			[
+				"sto",
+				"_stock"
+			],
+			[
+				"St",
+				"Stock"
+			],
+			[
+				"b",
+				"button_type"
+			],
+			[
+				"bu",
+				"button_type"
+			],
+			[
+				"ac",
+				"_access"
+			],
+			[
+				"A",
+				"AccessLevel"
+			],
+			[
+				"cr",
+				"crit"
+			],
+			[
+				"n",
+				"name"
+			],
+			[
+				"info",
+				"info_about_session"
+			],
+			[
+				"v",
+				"value"
+			],
+			[
+				"ch",
+				"change_chanel"
+			],
+			[
+				"re",
+				"record"
+			],
+			[
+				"reco",
+				"records"
+			],
+			[
+				"th",
+				"the_file"
+			],
+			[
+				"ne",
+				"next_line"
+			],
+			[
+				"el",
+				"elif"
+			],
+			[
+				"point",
+				"points"
+			],
+			[
+				"pt",
+				"print"
+			],
+			[
+				"w",
+				"word"
+			],
+			[
+				"W",
+				"WORDS"
+			],
+			[
+				"in",
+				"input"
+			],
+			[
+				"score",
+				"scores"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"contents": "from django.shortcuts import render, redirect\nfrom django.utils import timezone\nfrom django.http import HttpResponse\nfrom django.views.generic import TemplateView, View, DetailView\nfrom django.views.generic.edit import CreateView, UpdateView, DeleteView\nfrom django.views.generic.list import ListView\nfrom .models import Contract, Deposit, BankAccount, ChartOfAccounts, Transaction\nfrom bankSystem import models\n\n\nclass DepositListView(ListView):\n    model = Deposit\n    paginate_by = 20  # if pagination is desired\n\n\nclass DepositDetailView(DetailView):\n    model = Deposit\n\n\nclass Index(TemplateView):\n    login_url = \"/login/\"\n    template_name = 'deposits/index.html'\n\n\nclass ContractCreate(CreateView):\n\tmodel = Contract\n\tfields = ['deposit', 'sum']\n\n\t@staticmethod\n\tdef _create_cashbox():\n\t\tcashbox = BankAccount.objects.get_or_create(\n\t\t\tcode__number = \"1010\"\n\t\t\tdefaults = {\n\t\t\t\t\"code\": ChartOfAccounts.objects.get(number=\"1010\"),\n\t\t\t\t\"number\": \"0\"*9+\"1010\",\n\t\t\t}\n\t\t)\n\t\treturn cashbox[0]\n\n\t@staticmethod\n\tdef _create_bank_fund():\n\t\tbank_fund = BankAccount.objects.get_or_create(\n\t\t\tcode__number = \"7327\"\n\t\t\tdefaults = {\n\t\t\t\t\"code\": ChartOfAccounts.objects.get(number=\"7327\"),\n\t\t\t\t\"number\": \"0\"*9+\"7327\",\n\t\t\t}\n\t\t)\n\t\treturn bank_fund[0]\n\n\t@staticmethod\n\tdef _create_customer_acc():\n\t\tbank_fund = BankAccount.objects.get_or_create(\n\t\t\tcode__number = \"7327\"\n\t\t\tdefaults = {\n\t\t\t\t\"code\": ChartOfAccounts.objects.get(number=\"7327\"),\n\t\t\t\t\"number\": \"0\"*9+\"7327\",\n\t\t\t}\n\t\t)\n\t\treturn bank_fund[0]\n\n\tdef create_transaction(self, source, target, sum):\n\t\ttransaction = Transaction(source_acc=source, target_acc=target, sum=sum)\n\t\ttransaction.save()\n\n\tdef _transaction_chain(self, contract: Contract):\n\t\t\"\"\"Цепочка транзакций при заключении новго договора\"\"\"\n\t\tcashbox_acc = self._create_cashbox()\n\t\tcashbox_acc.debits += contract.sum\n\t\tcashbox.save()\n\t\tbank_fund_acc = self._create_bank_fund()\n\t\tcustomer_acc = BankAccount(code = ChartOfAccounts.objects.get(number=\"3014\"), contract=contract)\n\t\tcustomer_acc.save() \n\t\tself.create_transaction(cashbox_acc, customer_acc, contract.sum)\n\t\tself.create_transaction(customer_acc, bank_fund_acc, contract.sum)\n\n\tdef form_valid(self, form):\n\t\tsuper().form_valid(form)\n\t\tcontract = self.object\n\t\tself.object.start = timezone.now()\n\t\tself.object.end = timezone.now() + self.object.deposit.term  \n\t\tself.object.customer = models.Customer.objects.get(user=self.request.user)\n\t\tself.object.save()\n\t\tself._transaction_chain(self.object)\n\t\treturn HttpResponse(\"deposit-list\")",
+			"file": "views.py",
+			"file_size": 2631,
+			"file_write_time": 131683555712686543,
+			"settings":
+			{
+				"buffer_size": 2502,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"contents": "from django.db import models\nimport sys\nimport random\n# sys.path.insert(0, \"..\")\n# import  bankSystem\nfrom djmoney.models.fields import MoneyField\n\n\nCURRENCY_CHOICES = [('USD', 'USD $'), ('EUR', 'EUR €'), ('BYN', 'BYN')]\nACCOUNT_TYPE_CHOICE = [('Active', 'Активный'), ('Passive', 'Пассивный'), ('Active-Passive', 'Активно-Пассивный')]\n\n# Create your models here.\nclass Deposit(models.Model):\n    type = models.CharField(max_length=40, verbose_name=\"Вид депозита\")\n    term = models.DurationField(verbose_name=\"Продолжительность\")\n    currency = models.CharField(max_length=40, choices=CURRENCY_CHOICES)\n    is_active = models.BooleanField(verbose_name = \"Доступен\", default=False)\n    min_summ =  MoneyField(max_digits=10, decimal_places=2, default_currency='BYN', default=0)\n\nclass Interest(models.Model):\n    deposit = models.ForeignKey(\"Deposit\", verbose_name=\"Депозит\", on_delete=models.CASCADE)\n    value = models.FloatField(default=0, verbose_name=\"Сумма\")\n    rate = models.FloatField(default=0, verbose_name=\"Ставка\")\n\nclass TermType(models.Model):\n    type = models.CharField(max_length=15, verbose_name=\"Тип периода\")\n\n\nclass ChartOfAccounts(models.Model):\n    '''Список счетов'''\n    number = models.CharField(max_length=4, verbose_name=\"Номер счета\")\n    name = models.CharField(max_length=50, verbose_name=\"Наименование счета\")\n    type =models.CharField(max_length=50, choices=ACCOUNT_TYPE_CHOICE)\n\n\nclass Contract(models.Model):\n    '''Договор'''\n    number = models.CharField(max_length=4, verbose_name=\"Номер договора\", blank=True)\n    customer = models.ForeignKey('bankSystem.Customer', verbose_name = \"Клиент\", on_delete=models.CASCADE)\n    deposit = models.ForeignKey('Deposit', verbose_name = \"Депозит\", on_delete=models.CASCADE)\n    start = models.DateField(verbose_name = \"Дата начала договора\")\n    end = models.DateField(verbose_name = \"Дата конца договора\")\n    sum = models.FloatField(max_length=4, verbose_name=\"Сумма договора\")\n\n    def save(self, *args, **kwargs):\n        super().save(*args, **kwargs)\n        if not self.number:\n            self.number = str(self.id  + 1).zfill(3)\n        super().save(*args, **kwargs)\n\n\nclass BankAccount(models.Model):\n    '''Класс банковских счетов'''\n    number = models.CharField(max_length=13, verbose_name=\"Номер банковского счета\", default=\"Касса\")\n    code = models.ForeignKey('ChartOfAccounts', verbose_name = \"Код счета из плана счетов\", on_delete=models.CASCADE)\n    debits = models.FloatField(max_length=10, verbose_name=\"Дебет\", default=0)\n    credits = models.FloatField(max_length=10, verbose_name=\"Кредит\", default=0)\n    contract = models.OneToOneField('Contract', verbose_name = \"Договор\", on_delete=models.CASCADE, blank=True, null=True)\n\n    @property\n    def balance(self):\n        return self.debits - self.credits if self.code.type == 'Active' else self.credits - self.debits\n\n    def change_source_account(self, sum):\n        \"\"\"Отражение движения средств счета-источника\"\"\"\n        cd = self.credits if self.code.type == \"Active\" else self.debits\n        cd += sum\n        self.save()\n\n    def change_target_account(self, sum):\n        \"\"\"Отражение движения средств целевого счета\"\"\"\n        cd = self.debits if self.code.type == \"Active\" else self.credits\n        cd += sum\n        self.save()\n\n    def save(self, *args, **kwargs):\n        if not self.number and contract:\n            self.number = str(self.code.number) \\\n                          + str(self.contract.customer.id if self.contract else 11111).zfill(5) \\\n                          + str(self.contract.id).zfill(3)\\\n                          + str(random.range(10)) \n        super(models.Model, self).save(*args, **kwargs)\n\n\nclass Transaction(models.Model):\n    ''''''\n    source_acc = models.ForeignKey('BankAccount', verbose_name = \"\", on_delete=models.CASCADE, related_name='source_acc')\n    target_acc = models.ForeignKey('BankAccount', verbose_name = \"\", on_delete=models.CASCADE, related_name='target_acc')\n    date = models.DateTimeField(auto_now_add=True)\n    sum = models.FloatField(max_length=10, verbose_name=\"Сумма договора\")\n\n    def save(self, *args, **kwargs):\n        super(models.Model, self).save(*args, **kwargs)\n        # далее идет двойная запись\n        self.source_acc.change_source_account(self.sum)\n        self.target_acc.change_target_account(self.sum)\n\n",
+			"file": "models.py",
+			"file_size": 4852,
+			"file_write_time": 131683543424221835,
+			"settings":
+			{
+				"buffer_size": 4339,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "urls.py",
+			"settings":
+			{
+				"buffer_size": 391,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "templates/deposits/contract_form.html",
+			"settings":
+			{
+				"buffer_size": 115,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/D/Projects/rsoi_bankSystem/rsoi_bankSystem/bankSystem/admin.py",
+			"settings":
+			{
+				"buffer_size": 681,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 173.0,
+		"last_filter": "insta",
+		"selected_items":
+		[
+			[
+				"insta",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 392.0
+	},
+	"console":
+	{
+		"height": 64.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/D/Projects/rsoi_bankSystem/rsoi_bankSystem/deposits/rsoi.sublime-project",
+		"/D/Projects/rsoi_bankSystem/rsoi_bankSystem/deposits/models.py",
+		"/D/Projects/rsoi_bankSystem/rsoi_bankSystem/deposits/forms.py",
+		"/D/Projects/rsoi_bankSystem/rsoi_bankSystem/bankSystem/views.py",
+		"/D/Projects/rsoi_bankSystem/rsoi_bankSystem/bankSystem/models.py",
+		"/D/Projects/rsoi_bankSystem/rsoi_bankSystem/deposits/urls.py",
+		"/D/Projects/rsoi_bankSystem/rsoi_bankSystem/bankSystem/templates/bankSystem/index_page.html",
+		"/D/Projects/rsoi_bankSystem/rsoi_bankSystem/deposits/templates/deposits/index.html",
+		"/D/Projects/rsoi_bankSystem/rsoi_bankSystem/deposits/views.py",
+		"/D/Projects/rsoi_bankSystem/rsoi_bankSystem/deposits/templates/deposits/deposit_detail.html",
+		"/D/Projects/rsoi_bankSystem/rsoi_bankSystem/deposits/templates/deposits/deposit_list.html",
+		"/D/Projects/rsoi_bankSystem/rsoi_bankSystem/rsoi_bankSystem/settings.py",
+		"/D/Projects/rsoi_bankSystem/rsoi_bankSystem/bankSystem/admin.py",
+		"/D/Projects/rsoi_bankSystem/rsoi_bankSystem/rsoi_bankSystem/urls.py",
+		"/D/Projects/rsoi_bankSystem/deposits/models.py",
+		"/D/Projects/rsoi_bankSystem/deposites/models.py",
+		"/C/Users/2000/Downloads/xercesImpl-2.9.1.jar",
+		"/C/Users/2000/Desktop/лабаписм/рсои/StoreService.wsdd",
+		"/C/Users/2000/Desktop/жс/hello2.js",
+		"/D/tomcat/apache-tomcat-8.5.27/bin/catalina.bat",
+		"/D/tomcat/apache-tomcat-8.5.27/bin/catalina.sh",
+		"/C/Users/2000/AppData/Local/Temp/Rar$DRa0.327/javamail-1.4.7/mail.jar",
+		"/C/Users/2000/Desktop/жс/hello.html",
+		"/C/Users/2000/AppData/Local/Temp/Rar$DRa0.858/hfpy2e-all/ch05/webapp/templates/base.html",
+		"/C/Users/2000/PycharmProjects/untitled/mymodules/__pycache__/searchv.cpython-36.pyc",
+		"/C/Users/2000/Desktop/жс/hello1 - копия.js",
+		"/C/Users/2000/Desktop/жс/Task 1/hello.html",
+		"/C/Users/2000/Desktop/7 лаба писм/xmldata.xml",
+		"/C/Users/2000/Desktop/7 лаба писм/html.html",
+		"/D/org/proj1/build.xml",
+		"/C/Users/2000/Test1.py",
+		"/C/Users/2000/AppData/Local/Temp/Rar$DRa0.717/7 лаба/html.html",
+		"/D/org/bsuir/gr573902/il/laba4/proj2/src/Echo2.java",
+		"/D/org/bsuir/gr573902/il/laba4/proj2/src/helper/ConsoleWriter.java",
+		"/D/org/bsuir/gr573902/il/laba4/proj1/build/jar/Echo.jar",
+		"/D/org/bsuir/gr573902/il/laba4/proj1/pom.xml",
+		"/D/org/bsuir/gr574003/Gorunovich/laba4/proj1/build.xml",
+		"/C/Users/2000/CompositePattern.py",
+		"/C/Users/2000/FacadeTest.py",
+		"/C/Users/2000/FacadePattern.py",
+		"/C/Users/2000/BuilderPatternTest.py",
+		"/C/Users/2000/BuilderPattern.py",
+		"/C/Users/2000/FactoryPatternTest.py",
+		"/C/Users/2000/AbstractFactoryPattern.py",
+		"/C/Users/2000/VisitorPatternTest.py",
+		"/C/Users/2000/VisitorPattern.py",
+		"/C/Users/2000/TemplatePatternTest.py",
+		"/C/Users/2000/TemplatePattern.py",
+		"/C/Users/2000/CompositePatternTest.py",
+		"/C/Users/2000/Desktop/Python/tvnew.py",
+		"/C/Users/2000/Desktop/Python/Patterns/CompositePattern.py",
+		"/C/Users/2000/Desktop/Python/игра.py",
+		"/C/Users/2000/Desktop/Python/Patterns/AbstractFactoryPattern.py",
+		"/C/Users/2000/Desktop/Python/Patterns/TemplatePattern.py",
+		"/C/Users/2000/Desktop/Python/Patterns/VisitorPattern.py",
+		"/C/Users/2000/Desktop/Test1.py",
+		"/C/Users/2000/AppData/Local/Temp/Rar$DRa0.235/Patterns/src/CompositePattern.java",
+		"/C/Users/2000/AppData/Local/Temp/Rar$DRa0.882/Patterns/src/FacadePattern.java",
+		"/C/Users/2000/AppData/Local/Temp/Rar$DRa0.829/Patterns/src/BuilderPattern.java",
+		"/C/Users/2000/Desktop/AbstractFactoryPattern.py",
+		"/C/Users/2000/AppData/Local/Temp/Rar$DRa0.482/Patterns/src/TemplatePattern.java",
+		"/C/Users/2000/AppData/Local/Temp/Rar$DRa0.377/Patterns/src/VisitorPattern.java",
+		"/C/Users/2000/Desktop/FacadePattern.py",
+		"/C/Users/2000/Desktop/Python/trivia_challenge переделанный.py",
+		"/C/Users/2000/Desktop/Python/сынотец.py",
+		"/C/Users/2000/Desktop/Python/zoofarm.py",
+		"/C/Users/2000/Desktop/Python/виселица.py",
+		"/C/Users/2000/Desktop/шаблон2.py",
+		"/C/Users/2000/Desktop/шаблон.py",
+		"/C/Users/2000/AppData/Local/Temp/Rar$DRa0.490/Patterns/src/AbstractFactoryPattern.java",
+		"/C/Users/2000/Desktop/Python/tv.py",
+		"/C/Users/2000/Desktop/Python/угадай число передел.py",
+		"/C/Users/2000/Desktop/Python/py3e_source/chapter07/handle_it.py",
+		"/C/Users/2000/Desktop/Python/py3e_source/chapter07/trivia_challenge.py",
+		"/C/Users/2000/Desktop/Python/py3e_source/chapter07/read_it.py",
+		"/C/Users/2000/Desktop/Python/py3e_source/chapter07/pickle_it.py",
+		"/C/Users/2000/Desktop/Python/крестики нолики.py",
+		"/C/Users/2000/Desktop/Python/py3e_source/chapter06/instructions.py",
+		"/C/Users/2000/Desktop/Python/py3e_source/chapter06/birthday_wishes.py",
+		"/C/Users/2000/Desktop/Python/scores2.py",
+		"/C/Users/2000/Desktop/Python/scores.py",
+		"/C/Users/2000/Desktop/Python/words list.py",
+		"/C/Users/2000/Desktop/Python/viselica.py",
+		"/C/Users/2000/Desktop/hello.html",
+		"/C/Users/2000/Desktop/жс/hello1.js",
+		"/C/Users/2000/Desktop/Python/translater.py"
+	],
+	"find":
+	{
+		"height": 36.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"deposite",
+			"site",
+			"bank_fund_acc",
+			"obje",
+			"objec",
+			"obje",
+			"objects",
+			"111",
+			"()\n",
+			"now",
+			"debit_credit_change",
+			"source_acc = models.ForeignKey('BankAccount', verbose_name = \"\", on_delete=models.CASCADE)",
+			"from",
+			"User",
+			"java_home",
+			"catalina_home",
+			"path",
+			"classpath",
+			"java_home",
+			"set local",
+			"Litvinchuk",
+			"self._children.append(obj)",
+			"ask_num",
+			"ask_number",
+			" \n"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"deposit",
+			" :"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": false
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "views.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2502,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2502,
+								2502
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 900.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "models.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4339,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1663,
+								1663
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 422.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "urls.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 391,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								204,
+								192
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "templates/deposits/contract_form.html",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 115,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								115,
+								115
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "/D/Projects/rsoi_bankSystem/rsoi_bankSystem/bankSystem/admin.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 681,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								613,
+								613
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 28.0
+	},
+	"input":
+	{
+		"height": 32.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "rsoi.sublime-project",
+	"replace":
+	{
+		"height": 66.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 392.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 696.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 281.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

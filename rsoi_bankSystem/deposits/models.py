@@ -32,14 +32,16 @@ class ChartOfAccounts(models.Model):
     name = models.CharField(max_length=50, verbose_name="Наименование счета")
     type =models.CharField(max_length=50, choices=ACCOUNT_TYPE_CHOICE)
 
+    def __str__(self):
+        return "Номер: %s, наименование: %s, тип: %s" % (self.number, self.name, self.type)
 
 class Contract(models.Model):
     '''Договор'''
     number = models.CharField(max_length=4, verbose_name="Номер договора", blank=True)
     customer = models.ForeignKey('bankSystem.Customer', verbose_name = "Клиент", on_delete=models.CASCADE)
     deposite = models.ForeignKey('Deposit', verbose_name = "Депозит", on_delete=models.CASCADE)
-    start = models.DateField(verbose_name = "Дата начала договора")
-    end = models.DateField(verbose_name = "Дата конца договора")
+    start = models.DateField(verbose_name = "Дата начала договора", auto_now_add=True)
+    end = models.DateField(verbose_name = "Дата конца договора", null=True)
     sum = models.FloatField(max_length=4, verbose_name="Сумма договора")
 
     def save(self, *args, **kwargs):
@@ -48,10 +50,13 @@ class Contract(models.Model):
             self.number = str(self.id  + 1).zfill(3)
         super().save(*args, **kwargs)
 
+    def __str__(self):
+        return "Контракт №: %s, клиент: %s" %  (self.number, self.customer)
+
 
 class BankAccount(models.Model):
     '''Класс банковских счетов'''
-    number = models.CharField(max_length=13, verbose_name="Номер банковского счета", default="Касса")
+    number = models.CharField(max_length=13, verbose_name="Номер банковского счета", blank=True)
     code = models.ForeignKey('ChartOfAccounts', verbose_name = "Код счета из плана счетов", on_delete=models.CASCADE)
     debits = models.FloatField(max_length=10, verbose_name="Дебет", default=0)
     credits = models.FloatField(max_length=10, verbose_name="Кредит", default=0)
@@ -61,28 +66,28 @@ class BankAccount(models.Model):
     def balance(self):
         return self.debits - self.credits if self.code.type == 'Active' else self.credits - self.debits
 
-    def commmit_transaction(self, source_target, sum):
-        transaction = {
-            "Active":{
-                "source": self.credits,
-                "target": self.debits,      
-            },
-            "Passive": {
-                "source": self.debits,
-                "target": self.credits, 
-            }
-        }
-        transaction[self.code.type][source_target] += sum
+    def change_source_account(self, sum):
+        """Отражение движения средств счета-источника"""
+        t =  "credits" if self.code.type == "Active" else "debits"
+        self.__dict__[t] += sum
+        self.save()
+
+    def change_target_account(self, sum):
+        """Отражение движения средств целевого счета"""
+        t = "debits" if self.code.type == "Active" else "credits"
+        self.__dict__[t] += sum
         self.save()
 
     def save(self, *args, **kwargs):
-        if not self.number and contract:
+        if not self.number and self.contract:
             self.number = str(self.code.number) \
                           + str(self.contract.customer.id if self.contract else 11111).zfill(5) \
                           + str(self.contract.id).zfill(3)\
-                          + str(random.range(10)) 
-        super(models.Model, self).save(*args, **kwargs)
+                          + str(random.randrange(10)) 
+        super().save(*args, **kwargs)
 
+    def __str__(self):
+        return "Номер: %s; код: %s, дебит: %s, кредит: %s,  договор: %s" % (self.number, self.code, self.debits, self.credits, self.contract)
 
 class Transaction(models.Model):
     ''''''
@@ -92,8 +97,11 @@ class Transaction(models.Model):
     sum = models.FloatField(max_length=10, verbose_name="Сумма договора")
 
     def save(self, *args, **kwargs):
-        super(models.Model, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         # далее идет двойная запись
-        self.source_acc.commmit_transaction("source", self.sum)
-        self.target_acc.commmit_transaction("target", self.sum)
+        self.source_acc.change_source_account(self.sum)
+        self.target_acc.change_target_account(self.sum)
 
+    def __str__(self):
+        return "%s счета %s, %s счета %s, сумма: %s" %  ("Кт" if self.source_acc.code.type == "Active" else "Дт", self.source_acc.number,  
+            "Дт" if self.target_acc.code.type == "Active" else "Кт", self.target_acc.number,  self.sum)
