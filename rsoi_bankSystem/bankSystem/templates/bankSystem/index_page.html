@@ -1,7 +1,18 @@
-<head>
-	<a href="{% url 'bankSystem:index' %}">Главная</a>
-	<a href="{% url 'deposits:index' %}">Депозиты</a>
-	<a href="{% url 'bankSystem:logout' %}">Выйти</a>
-</head> 
-
-<div>Стартовая страница</div>
+<!doctype html>
+<html>
+    <head>
+    <link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway:600">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'bootstrap-3.3.2-dist/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'bootstrap-3.3.2-dist/css/bootstrap-theme.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" >
+    </head> 
+    <body>
+        <div class="container-fluid"><p>Стартовая страница</p></div>
+        <ul class="nav nav-tabs custom-nav-tabs">
+            <li role="presentation"><a href="{% url 'bankSystem:index' %}">Главная</a></li>
+            <li role="presentation"><a href="{% url 'deposits:deposit-list' %}">Депозиты</a></li>
+                <li role="presentation"><a href="{% url 'bankSystem:logout' %}">Выйти</a></li>
+        </ul>
+    </body>
+<html>

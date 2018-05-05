@@ -3,3 +3,4 @@ django-money==0.12.3
 psycopg2==2.7.4
 py-moneyed==0.7.0
 pytz==2018.3
+django-bootstrap3==10.0.1

@@ -1,0 +1,35 @@
+body {
+	color:black;
+	background-color: #fffdfc;
+	margin: 0;
+    font-family: 'Raleway', sans-serif;
+}
+p {
+    font-size: 20px;
+    margin-top: 10px;
+    margin-bottom: 0;
+}
+/*
+input[type="text"] {
+	background-color: black;
+	height: 18px;
+	color: #b2b2b2;
+	vertical-align: top;
+}
+*/
+.h1{
+    margin-left: 15px;
+}
+.custom nav-tabs {
+    text-align: center;
+    padding: 30px;
+}
+.nav {
+    margin-top: 5;
+}
+
+/*
+.main li a {
+    text-decoration: none; 
+    font: 20px;
+} */

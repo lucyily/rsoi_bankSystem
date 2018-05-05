@@ -1,12 +1,32 @@
-<h1>Депозиты</h1>
-<ul>	
-	{% for deposit in object_list %}
-		<li>
-			<div><a href="{%url 'deposits:deposit-details' pk=deposit.pk %}">Подробности</a></div>
-			<div>Вид депозита - {{ deposit.type }}</div>
-<!-- пропиши йопта тут инфу о депозитах краткую -->
-		</li>
-	{% empty %}
-		<li>No deposits yet.</li>
-	{% endfor %}
-</ul>
+<!doctype html>
+<html>
+    <head>
+
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'bootstrap-3.3.2-dist/css/bootstrap.min.css' %}">
+        <link rel="stylesheet" href="{% static 'bootstrap-3.3.2-dist/css/bootstrap-theme.min.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" >
+    </head>
+    <body>
+    <h1 class="container-fluid">Депозиты</h1>
+    <ul class="list-group">	
+        {% for deposit in object_list %}
+            <li class="list-group-item">
+                <div><a href="{%url 'deposits:deposit-details' pk=deposit.pk %}">Подробности</a></div>
+                <div>Вид депозита - {{ deposit.type }}</div>
+    <!-- пропиши йопта тут инфу о депозитах краткую -->
+            </li>
+        {% empty %}
+            <li class="list-group-item">No deposits yet.</li>
+        {% endfor %}
+    </ul>
+<!--
+       {% load static %} 
+        {% block js %}
+    <script src="{% static 'bootstrap-3.3.2-dist/js/bootstrap.js' %}"></script>
+    <script src="{% static 'bootstrap-3.3.2-dist/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'bootstrap-3.3.2-dist/js/npm.js' %}"></script>
+        {% endblock %}
+-->
+    </body>
+</html>
