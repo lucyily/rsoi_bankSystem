@@ -1,6 +1,8 @@
 body {
+	color:black;
 	background-color: #fffdfc;
 	margin: 0;
+    font-family: 'Raleway', sans-serif;
 }
 p {
     font-size: 20px;
@@ -15,11 +17,10 @@ input[type="text"] {
 	vertical-align: top;
 }
 */
-.h1{
-    margin-left: 15px;
-}
+
 .custom nav-tabs {
     text-align: center;
+    background-color: silver;
     padding: 30px;
 }
 .nav {

@@ -1,13 +1,19 @@
-<head>
+
+{% extends 'bankSystem/base.html' %}
+
+
+{% block content %}
     <link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway:600">
     {% load static %}
     <link rel="stylesheet" href="{% static 'bootstrap-3.3.2-dist/css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'bootstrap-3.3.2-dist/css/bootstrap-theme.min.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" >
-</head> 
 <nav class="part">
     <ul class="nav nav-tabs custom-nav-tabs">
         <li role="presentation"><a href="{% url 'deposits:deposit-list' %}" alt="">Депозиты</a></li>
         <li role="presentation"><a href="{% url 'deposits:create-contract' %}" alt="">Заключить договор</a></li>
+        <li role="presentation"><a href="{% url 'deposits:contract-list' %}" alt="">Ваши вклады</a></li>
+
     </ul>
 </nav>
+
+{% endblock %}

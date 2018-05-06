@@ -1,0 +1,20 @@
+<!doctype html>
+
+
+{% extends 'bankSystem/base.html' %}
+
+
+{% block content %}
+	<h1 class="container-fluid">Ваши депозиты</h1>
+    <ul class="list-group">	
+        {% for contract in object_list %}
+            <li class="list-group-item">
+                <div><a href="{%url 'deposits:contract-details' pk=contract.pk %}">Подробности</a></div>
+                <div>Активный депозит - {{ contract }}</div>
+    <!-- пропиши  тут инфу о депозитах краткую -->
+            </li>
+        {% empty %}
+            <li class="list-group-item">No deposits yet.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

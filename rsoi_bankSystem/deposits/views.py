@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from datetime import datetime
+from datetime import datetime, date
 from django.utils import timezone
 from django.http import HttpResponse
 from django.views.generic import TemplateView, View, DetailView
@@ -11,7 +11,7 @@ from bankSystem import models
 
 class DepositListView(ListView):
     model = Deposit
-    paginate_by = 20  # if pagination is desired
+    paginate_by = 10  # if pagination is desired
 
 
 class DepositDetailView(DetailView):
@@ -32,12 +32,13 @@ def create_bank_fund():
             "name": "Фонд банковского развития",
             "type": "Passive"
         }
-    )
+    )[0]
     bank_fund = BankAccount.objects.get_or_create(
         code = code,
         defaults = {
             "code": ChartOfAccounts.objects.get(number=code_number),
             "number": code_number+"0"*9,
+            "credits": 10**11
         }
     )
     return bank_fund[0]
@@ -52,7 +53,7 @@ def create_cashbox():
             "name": "Касса",
             "type": "Active"
         }
-    )
+    )[0]
     cashbox = BankAccount.objects.get_or_create(
         code = code,
         defaults = {
@@ -72,7 +73,7 @@ def create_customer_acc(contract):
             "name": "Текущий счет клиента",
             "type": "Active"
         }
-    )
+    )[0]
     customer_acc = BankAccount.objects.get_or_create(
         code = code,
         contract = contract,
@@ -93,7 +94,7 @@ def create_interest_acc(contract):
             "name": "Процентный счет клиента",
             "type": "Active"
         }
-    )
+    )[0]
     customer_acc = BankAccount.objects.get_or_create(
         code = code,
         contract = contract,
@@ -111,12 +112,6 @@ def create_transaction(source, target, sum):
     transaction.save()
 
 
-def calculate_interest(contract: Contract):
-    interests = Interest.objects.filter(value__lte = contract.sum)
-    interest = max(interests, key=lambda i: i.rate)
-    return interest.rate
-
-
 class ContractCreate(CreateView):
     model = Contract
     fields = ['deposite', 'sum']
@@ -131,8 +126,11 @@ class ContractCreate(CreateView):
         cashbox_acc.debits += contract.sum
         cashbox_acc.save()
         bank_fund_acc = create_bank_fund()
+        bank_fund_acc.save()
         customer_acc = create_customer_acc(contract)
         customer_acc.save()
+        interest_acc = create_interest_acc(contract)
+        interest_acc.save()
         self.create_transaction(cashbox_acc, customer_acc, contract.sum)
         self.create_transaction(customer_acc, bank_fund_acc, contract.sum)
 
@@ -150,17 +148,46 @@ class ContractCreate(CreateView):
             self._transaction_chain(self.contract)
             return HttpResponse("deposit-list")
 
+
+class UserContractListView(ListView):
+    template_name = 'deposits/user_contract_list.html'
+
+    def get_queryset(self):
+        customer = models.Customer.objects.get(user = self.request.user) 
+        queryset = Contract.objects.filter(customer=customer)
+        return queryset
+
+
+class ContractTransactionList(DetailView):
+    model = Contract
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['interest_sum'] = BankAccount.objects.filter(contract=self.object, code__number="3471").first().credits
+        return context
+    
 def next_day(request):
-    for contract in Contract.objects.filter(end__gte = datetime.now()):
-        daily_interest = calculate_interest(contract)/100/365
-        daily_payment = round(daily_interest*contract.sum, 4)
-        cashbox_acc = create_cashbox()
-        bank_fund_acc = create_bank_fund()
-        user_acc = create_customer_acc(contract=contract)
-        interest_acc = create_interest_acc(contract=contract)
-        create_transaction(bank_fund_acc, interest_acc, daily_payment)
-        create_transaction(interest_acc, cashbox_acc, daily_payment)
-        cashbox_acc.credits += daily_payment
-        cashbox_acc.save()
-        print("hi")
-    return HttpResponse("pizdec")
+    if request.method == "POST":
+        last_day = None
+        try:
+            with open("last_next_day", "r") as f:
+                last_day = f.readline().strip()
+        except:
+            with open("last_next_day", "w") as f:
+                f.close()
+        if last_day == str(date.today()):
+            return HttpResponse("Сегодня вы уже делали процедуру: Следующий банковский день ")
+        for contract in Contract.objects.filter(end__gte = datetime.now()):
+            daily_interest = contract.interest/100/365
+            daily_payment = round(daily_interest*contract.sum, 4)
+            cashbox_acc = create_cashbox()
+            bank_fund_acc = create_bank_fund()
+            user_acc = create_customer_acc(contract=contract)
+            interest_acc = create_interest_acc(contract=contract)
+            create_transaction(bank_fund_acc, interest_acc, daily_payment)
+            create_transaction(interest_acc, cashbox_acc, daily_payment)
+            cashbox_acc.credits += daily_payment
+            cashbox_acc.save()
+            with open("last_next_day", "w") as f:
+                f.write(str(date.today()))
+        return HttpResponse("Процедура \"Закрыть банковский день\" прошла успешно")

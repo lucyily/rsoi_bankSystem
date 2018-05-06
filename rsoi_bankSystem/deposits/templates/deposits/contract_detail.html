@@ -1,0 +1,13 @@
+{% extends 'bankSystem/base.html' %}
+
+{% block content %}
+<h1>Номер депозита: {{ object.number }}</h1>
+<p>{{ object.customer }}</p>
+<p>Наименование вклада: {{ object.deposite }}</p>
+<p>Дата открытия: {{ object.start }} </p>
+<p>Дата окончания: {{ object.end }}</p> 
+<p>Процентная ставка: {{ object.interest }}%</p>
+<p>Сумма вклада: {{ object.sum }}</p>
+
+<p>Начислено по процентам вклада: {{ interest_sum }}</p>
+{% endblock %}

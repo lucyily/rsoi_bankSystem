@@ -44,6 +44,12 @@ class Contract(models.Model):
     end = models.DateField(verbose_name = "Дата конца договора", null=True)
     sum = models.FloatField(max_length=4, verbose_name="Сумма договора")
 
+    @property 
+    def interest(self):
+        interests = Interest.objects.filter(value__lte = self.sum)
+        interest = max(interests, key=lambda i: i.rate)
+        return interest.rate
+
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         if not self.number:
@@ -60,7 +66,7 @@ class BankAccount(models.Model):
     code = models.ForeignKey('ChartOfAccounts', verbose_name = "Код счета из плана счетов", on_delete=models.CASCADE)
     debits = models.FloatField(max_length=10, verbose_name="Дебет", default=0)
     credits = models.FloatField(max_length=10, verbose_name="Кредит", default=0)
-    contract = models.OneToOneField('Contract', verbose_name = "Договор", on_delete=models.CASCADE, blank=True, null=True)
+    contract = models.ForeignKey('Contract', verbose_name = "Договор", on_delete=models.CASCADE, blank=True, null=True)
 
     @property
     def balance(self):
