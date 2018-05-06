@@ -22,21 +22,37 @@ class Index(TemplateView):
     login_url = "/login"
     template_name = 'deposits/index.html'
 
-def _create_bank_fund():
+
+def create_bank_fund():
     code_number = "7327"
-    code = ChartOfAccounts.objects.get(number="7327")
+    code = ChartOfAccounts.objects.get_or_create(
+        number=code_number,
+        defaults = {
+            "number": code_number,
+            "name": "Фонд банковского развития",
+            "type": "Passive"
+        }
+    )
     bank_fund = BankAccount.objects.get_or_create(
         code = code,
         defaults = {
-            "code": ChartOfAccounts.objects.get(number="7327"),
+            "code": ChartOfAccounts.objects.get(number=code_number),
             "number": code_number+"0"*9,
         }
     )
     return bank_fund[0]
 
-def _create_cashbox():
+
+def create_cashbox():
     code_number = "1010"
-    code = ChartOfAccounts.objects.get(number=code_number)
+    code = ChartOfAccounts.objects.get_or_create(
+        number=code_number,
+        defaults = {
+            "number": code_number,
+            "name": "Касса",
+            "type": "Active"
+        }
+    )
     cashbox = BankAccount.objects.get_or_create(
         code = code,
         defaults = {
@@ -45,6 +61,49 @@ def _create_cashbox():
         }
     )
     return cashbox[0]
+
+
+def create_customer_acc(contract):
+    code_number = "3014"
+    code = ChartOfAccounts.objects.get_or_create(
+        number=code_number,
+        defaults = {
+            "number": code_number,
+            "name": "Текущий счет клиента",
+            "type": "Active"
+        }
+    )
+    customer_acc = BankAccount.objects.get_or_create(
+        code = code,
+        contract = contract,
+        defaults = {
+            "code": ChartOfAccounts.objects.get(number=code_number),
+            "number": code_number+"0"*9,
+            "contract":  contract,
+        }
+    )
+    return customer_acc[0]
+
+def create_interest_acc(contract):
+    code_number = "3471" #для срочных вкладов
+    code = ChartOfAccounts.objects.get_or_create(
+        number=code_number,
+        defaults = {
+            "number": code_number,
+            "name": "Процентный счет клиента",
+            "type": "Active"
+        }
+    )
+    customer_acc = BankAccount.objects.get_or_create(
+        code = code,
+        contract = contract,
+        defaults = {
+            "code": ChartOfAccounts.objects.get(number=code_number),
+            "number": code_number+"0"*9,
+            "contract":  contract,
+        }
+    )
+    return customer_acc[0]
 
 
 def create_transaction(source, target, sum):
@@ -62,76 +121,18 @@ class ContractCreate(CreateView):
     model = Contract
     fields = ['deposite', 'sum']
 
-    @staticmethod
-    def _create_cashbox():
-        code_number = "1010"
-        code = ChartOfAccounts.objects.get(number=code_number)
-        cashbox = BankAccount.objects.get_or_create(
-            code = code,
-            defaults = {
-                "code": ChartOfAccounts.objects.get(number=code_number),
-                "number": code_number+"0"*9,
-            }
-        )
-        return cashbox[0]
-
-    @staticmethod
-    def _create_bank_fund():
-        code_number = "7327"
-        code = ChartOfAccounts.objects.get(number=code_number)
-        bank_fund = BankAccount.objects.get_or_create(
-            code = code,
-            defaults = {
-                "code": ChartOfAccounts.objects.get(number=code_number),
-                "number": code_number+"0"*9,
-            }
-        )
-        return bank_fund[0]
-
-    @staticmethod
-    def _create_customer_acc(contract):
-        code_number = "3014"
-        code = ChartOfAccounts.objects.get(number=code_number)
-        customer_acc = BankAccount.objects.get_or_create(
-            code = code,
-            contract = contract,
-            defaults = {
-                "code": ChartOfAccounts.objects.get(number=code_number),
-                "number": code_number+"0"*9,
-                "contract":  contract,
-            }
-        )
-        return customer_acc[0]
-
-    @staticmethod
-    def _create_interest_acc(contract):
-        code_number = "3471" #для срочных вкладов
-        code = ChartOfAccounts.objects.get(number=code_number)
-        customer_acc = BankAccount.objects.get_or_create(
-            code = code,
-            contract = contract,
-            defaults = {
-                "code": ChartOfAccounts.objects.get(number=code_number),
-                "number": code_number+"0"*9,
-                "contract":  contract,
-            }
-        )
-        return customer_acc[0]
-
     def create_transaction(self, source, target, sum):
         transaction = Transaction(source_acc=source, target_acc=target, sum=sum)
         transaction.save()
 
     def _transaction_chain(self, contract: Contract):
         """Цепочка транзакций при заключении новго договора"""
-        cashbox_acc = self._create_cashbox()
+        cashbox_acc = create_cashbox()
         cashbox_acc.debits += contract.sum
         cashbox_acc.save()
-        bank_fund_acc = self._create_bank_fund()
-        customer_acc = BankAccount(
-            code = ChartOfAccounts.objects.get(number="3014"), 
-            contract=contract)
-        customer_acc.save() 
+        bank_fund_acc = create_bank_fund()
+        customer_acc = create_customer_acc(contract)
+        customer_acc.save()
         self.create_transaction(cashbox_acc, customer_acc, contract.sum)
         self.create_transaction(customer_acc, bank_fund_acc, contract.sum)
 
@@ -153,10 +154,10 @@ def next_day(request):
     for contract in Contract.objects.filter(end__gte = datetime.now()):
         daily_interest = calculate_interest(contract)/100/365
         daily_payment = round(daily_interest*contract.sum, 4)
-        cashbox_acc = _create_cashbox()
-        bank_fund_acc = _create_bank_fund()
-        user_acc = ContractCreate._create_customer_acc(contract=contract)
-        interest_acc = ContractCreate._create_interest_acc(contract=contract)
+        cashbox_acc = create_cashbox()
+        bank_fund_acc = create_bank_fund()
+        user_acc = create_customer_acc(contract=contract)
+        interest_acc = create_interest_acc(contract=contract)
         create_transaction(bank_fund_acc, interest_acc, daily_payment)
         create_transaction(interest_acc, cashbox_acc, daily_payment)
         cashbox_acc.credits += daily_payment

@@ -1,14 +1,13 @@
+<head>
+    <link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway:600">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'bootstrap-3.3.2-dist/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'bootstrap-3.3.2-dist/css/bootstrap-theme.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" >
+</head> 
 <nav class="part">
-	<a href="{% url 'deposits:deposit-list' %}" alt="">Депозиты</a>
-	<!-- <a href="https://www.bsb.by/business/account/byr-account/" alt="">Текущий счет в  рублях</a>
-	<a href="https://www.bsb.by/business/account/foreign-account/" alt="">Текущий валютный счет</a>
-	<a href="https://www.bsb.by/business/account/second_account/" alt="">Дистанционное открытие дополнительного счета</a>
-	<a href="https://www.bsb.by/business/account/temporary/" alt="">Временный счет</a>
-	<a href="https://www.bsb.by/business/account/other-accounts/" alt="">Другие счета</a>
-	<a href="https://www.bsb.by/business/account/transaction-mailing/" alt="">Рассылка о движении по счету</a>
-	<a href="https://www.bsb.by/business/account/depozits/" alt="" class="activ">Депозиты юридических лиц</a>
-	<a href="https://www.bsb.by/business/account/stroke-code-payments/" alt="">Штрих-кодирование платежек</a>
-	<a href="https://www.bsb.by/business/account/acceptance-withdraw-currency/" alt="">Прием и выдача иностранной валюты</a>
-	<a href="https://www.bsb.by/business/account/receiving-trade-receipts/" alt="">Прием торговой выручки</a>
-	<a href="https://www.bsb.by/business/account/offers/" alt="">Акция</a> -->
+    <ul class="nav nav-tabs custom-nav-tabs">
+        <li role="presentation"><a href="{% url 'deposits:deposit-list' %}" alt="">Депозиты</a></li>
+        <li role="presentation"><a href="{% url 'deposits:create-contract' %}" alt="">Заключить договор</a></li>
+    </ul>
 </nav>
