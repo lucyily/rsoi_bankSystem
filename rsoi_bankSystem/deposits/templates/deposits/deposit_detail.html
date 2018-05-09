@@ -4,7 +4,7 @@
 <h1>{{ object.type }}</h1>
 <p> Срок: <font id="term-of-usage">{{ object.term }}</font></p>
 <p>Валюта: {{ object.currency }}</p>
-<p>Минимальная сумма: {{ object.min_summ }}</p>
+<p>Минимальная сумма: <font id="min_sum">{{ object.min_summ }}</font></p>
 <div>
 <table  class="table">
 	<thead  class="thead-dark">
@@ -72,6 +72,7 @@
     {% endfor %}
 
     document.getElementById("id_sum").addEventListener("change", calculateInterest);
+    document.getElementById("id_sum").setAttribute("min", parseFloat(document.getElementById("min_sum").innerHTML));
 
     function calculateInterest(event) {
        max_rate = 0;
