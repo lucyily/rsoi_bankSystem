@@ -17,6 +17,11 @@ class DepositListView(ListView):
 class DepositDetailView(DetailView):
     model = Deposit
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['rates'] = Interest.objects.filter(deposit=self.get_object())
+        return context
+
 
 class Index(TemplateView):
     login_url = "/login"
@@ -146,7 +151,7 @@ class ContractCreate(CreateView):
             self.contract.customer = models.Customer.objects.get(user=self.request.user)
             self.contract.save()
             self._transaction_chain(self.contract)
-            return HttpResponse("deposit-list")
+            return redirect('../contract-list/')
 
 
 class UserContractListView(ListView):
@@ -190,4 +195,4 @@ def next_day(request):
             cashbox_acc.save()
             with open("last_next_day", "w") as f:
                 f.write(str(date.today()))
-        return HttpResponse("Процедура \"Закрыть банковский день\" прошла успешно")
+        return HttpResponse("Процедура отработала нормально")

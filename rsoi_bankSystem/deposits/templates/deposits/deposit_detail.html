@@ -6,6 +6,53 @@
 <p>Процентнаяя ставка: {{ object.interest_rate }}</p>
 <p>Валюта: {{ object.currency }}</p>
 <p>Минимальная сумма: {{ object.min_summ }}</p>
+<div>
+<table  class="table">
+	<thead  class="thead-dark">
+	    <tr>
+		     <th scope="col">Сумма</th>
+		     <th scope="col">Ставка</th>
+	    </tr>
+	</thead>
+	<tbody>
 
+		{% for r in rates %}
+			<tr  scope="row"> 
+				<td>{{ r.value }}</td>
+				<td>{{ r.rate }}%</td>
+			</tr>
+		{% endfor %}
+	</tbody>
+</table>
+</div>
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+	Оформить  вклад
+</button>
 
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Оформление вклада</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+	      Тут будет форма для оформления
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Отменить</button>
+        <button type="button" class="btn btn-primary">Подтвердить </button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+	$('#myModal').modal({
+	  keyboard: false
+	})
+</script>
 {% endblock %}

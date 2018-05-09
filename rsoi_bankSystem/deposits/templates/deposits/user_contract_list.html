@@ -10,7 +10,9 @@
         {% for contract in object_list %}
             <li class="list-group-item">
                 <div><a href="{%url 'deposits:contract-details' pk=contract.pk %}">Подробности</a></div>
-                <div>Активный депозит - {{ contract }}</div>
+		<div>
+			{% if contract.is_active %}<font color="blue">Активный вклад</font>{% else %}<font color="red"> Неактивен </font>{% endif %} - {{ contract }}
+		</div>
     <!-- пропиши  тут инфу о депозитах краткую -->
             </li>
         {% empty %}

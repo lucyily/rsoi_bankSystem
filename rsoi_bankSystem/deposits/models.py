@@ -1,6 +1,7 @@
 from django.db import models
 import sys
 import random
+from datetime import date
 # sys.path.insert(0, "..")
 # import  bankSystem
 from djmoney.models.fields import MoneyField
@@ -22,6 +23,10 @@ class Interest(models.Model):
     value = models.FloatField(default=0, verbose_name="Сумма")
     rate = models.FloatField(default=0, verbose_name="Ставка")
 
+    class Meta:
+        ordering = ['rate']
+    
+
 class TermType(models.Model):
     type = models.CharField(max_length=15, verbose_name="Тип периода")
 
@@ -35,9 +40,10 @@ class ChartOfAccounts(models.Model):
     def __str__(self):
         return "Номер: %s, наименование: %s, тип: %s" % (self.number, self.name, self.type)
 
+
 class Contract(models.Model):
     '''Договор'''
-    number = models.CharField(max_length=4, verbose_name="Номер договора", blank=True)
+    number = models.CharField(max_length=5, verbose_name="Номер договора", blank=True)
     customer = models.ForeignKey('bankSystem.Customer', verbose_name = "Клиент", on_delete=models.CASCADE)
     deposite = models.ForeignKey('Deposit', verbose_name = "Депозит", on_delete=models.CASCADE)
     start = models.DateField(verbose_name = "Дата начала договора", auto_now_add=True)
@@ -50,14 +56,23 @@ class Contract(models.Model):
         interest = max(interests, key=lambda i: i.rate)
         return interest.rate
 
+    @property
+    def is_active(self):
+        if date.today() > self.end:
+            return False
+        return True
+
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         if not self.number:
-            self.number = str(self.id  + 1).zfill(3)
+            self.number = str(self.id  + 1).zfill(5)
         super().save(*args, **kwargs)
 
     def __str__(self):
         return "Контракт №: %s, клиент: %s" %  (self.number, self.customer)
+
+    class Meta:
+        ordering = ['-end'] 
 
 
 class BankAccount(models.Model):
@@ -94,6 +109,7 @@ class BankAccount(models.Model):
 
     def __str__(self):
         return "Номер: %s; код: %s, дебит: %s, кредит: %s,  договор: %s" % (self.number, self.code, self.debits, self.credits, self.contract)
+
 
 class Transaction(models.Model):
     ''''''

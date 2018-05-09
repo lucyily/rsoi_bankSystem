@@ -5,16 +5,18 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'bootstrap-3.3.2-dist/css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'bootstrap-3.3.2-dist/css/bootstrap-theme.min.css' %}">
+    <script src="{% static 'bootstrap-3.3.2-dist/js/jquery-3.3.1.js' %}"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" >
+    <script src="{% static 'bootstrap-3.3.2-dist/js/bootstrap.js' %}"></script>
     </head> 
         <ul class="nav nav-tabs custom-nav-tabs dark">
             <li role="presentation"><a href="{% url 'bankSystem:index' %}">Главная</a></li>
             <li role="presentation"><a href="{% url 'deposits:index' %}">Депозиты</a></li>
                 <li role="presentation" class="pull-right"><a href="{% url 'bankSystem:logout' %}">Выйти</a></li>
         </ul>
-<html>
 
-	<body>
+<body>
 {% block content %}
 {% endblock %}
 </body>
+<html>
