@@ -13,7 +13,7 @@ ACCOUNT_TYPE_CHOICE = [('Active', 'Активный'), ('Passive', 'Пассив
 # Create your models here.
 class Deposit(models.Model):
     type = models.CharField(max_length=40, verbose_name="Вид депозита")
-    term = models.DurationField(verbose_name="Продолжительность")
+    term = models.IntegerField(max_length=4, verbose_name="Продолжительность")
     currency = models.CharField(max_length=40, choices=CURRENCY_CHOICES)
     is_active = models.BooleanField(verbose_name = "Доступен", default=False)
     min_summ =  MoneyField(max_digits=10, decimal_places=2, default_currency='BYN', default=0)

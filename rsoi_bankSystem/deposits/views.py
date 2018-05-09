@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from django.utils import timezone
 from django.http import HttpResponse
 from django.views.generic import TemplateView, View, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
+from .forms import ContractForm
 from .models import Contract, Deposit, BankAccount, ChartOfAccounts, Transaction, Interest
 from bankSystem import models
 
@@ -20,7 +21,41 @@ class DepositDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['rates'] = Interest.objects.filter(deposit=self.get_object())
+        context["form"] = ContractForm() 
         return context
+
+    def create_transaction(self, source, target, sum):
+        transaction = Transaction(source_acc=source, target_acc=target, sum=sum)
+        transaction.save()
+
+    def _transaction_chain(self, contract: Contract):
+        """Цепочка транзакций при заключении новго договора"""
+        cashbox_acc = create_cashbox()
+        cashbox_acc.debits += contract.sum
+        cashbox_acc.save()
+        bank_fund_acc = create_bank_fund()
+        bank_fund_acc.save()
+        customer_acc = create_customer_acc(contract)
+        customer_acc.save()
+        interest_acc = create_interest_acc(contract)
+        interest_acc.save()
+        self.create_transaction(cashbox_acc, customer_acc, contract.sum)
+        self.create_transaction(customer_acc, bank_fund_acc, contract.sum)
+
+    def post(self, request, *args, **kwargs):
+        form = ContractForm(request.POST)
+        if form.is_valid():
+            deposite = self.get_object()
+            sum = form.cleaned_data["sum"]
+            self.contract = Contract()
+            self.contract.deposite = deposite
+            self.contract.sum = sum
+            self.contract.start = timezone.now()
+            self.contract.end = timezone.now() + timedelta(days=self.contract.deposite.term)
+            self.contract.customer = models.Customer.objects.get(user=self.request.user)
+            self.contract.save()
+            self._transaction_chain(self.contract)
+            return redirect('../../contract-list/')
 
 
 class Index(TemplateView):
@@ -117,48 +152,11 @@ def create_transaction(source, target, sum):
     transaction.save()
 
 
-class ContractCreate(CreateView):
-    model = Contract
-    fields = ['deposite', 'sum']
-
-    def create_transaction(self, source, target, sum):
-        transaction = Transaction(source_acc=source, target_acc=target, sum=sum)
-        transaction.save()
-
-    def _transaction_chain(self, contract: Contract):
-        """Цепочка транзакций при заключении новго договора"""
-        cashbox_acc = create_cashbox()
-        cashbox_acc.debits += contract.sum
-        cashbox_acc.save()
-        bank_fund_acc = create_bank_fund()
-        bank_fund_acc.save()
-        customer_acc = create_customer_acc(contract)
-        customer_acc.save()
-        interest_acc = create_interest_acc(contract)
-        interest_acc.save()
-        self.create_transaction(cashbox_acc, customer_acc, contract.sum)
-        self.create_transaction(customer_acc, bank_fund_acc, contract.sum)
-
-    def form_valid(self, form):
-        if form.is_valid():
-            deposite = form.cleaned_data["deposite"]
-            sum = form.cleaned_data["sum"]
-            self.contract = Contract()
-            self.contract.deposite = deposite 
-            self.contract.sum = sum
-            self.contract.start = timezone.now()
-            self.contract.end = timezone.now() + self.contract.deposite.term  
-            self.contract.customer = models.Customer.objects.get(user=self.request.user)
-            self.contract.save()
-            self._transaction_chain(self.contract)
-            return redirect('../contract-list/')
-
-
 class UserContractListView(ListView):
     template_name = 'deposits/user_contract_list.html'
 
     def get_queryset(self):
-        customer = models.Customer.objects.get(user = self.request.user) 
+        customer = models.Customer.objects.get(user = self.request.user)
         queryset = Contract.objects.filter(customer=customer)
         return queryset
 
@@ -170,7 +168,8 @@ class ContractTransactionList(DetailView):
         context = super().get_context_data(**kwargs)
         context['interest_sum'] = BankAccount.objects.filter(contract=self.object, code__number="3471").first().credits
         return context
-    
+
+
 def next_day(request):
     if request.method == "POST":
         last_day = None

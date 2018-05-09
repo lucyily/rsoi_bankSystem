@@ -2,8 +2,7 @@
 
 {% block content %}
 <h1>{{ object.type }}</h1>
-<p>Срок: {{ object.term }}</p>
-<p>Процентнаяя ставка: {{ object.interest_rate }}</p>
+<p> Срок: <font id="term-of-usage">{{ object.term }}</font></p>
 <p>Валюта: {{ object.currency }}</p>
 <p>Минимальная сумма: {{ object.min_summ }}</p>
 <div>
@@ -41,18 +40,50 @@
         </button>
       </div>
       <div class="modal-body">
-	      Тут будет форма для оформления
+          <p>Сегодняшняя дата:</p>
+          <div id="today-date"> </div>
+          <p>Дата завершения договора:</p>
+          <div id="end-date"> </div>
+          <p>Процентная ставка равна:</p>
+          <div id="rate"> </div>
       </div>
+      <form action="" method="post">{% csrf_token %}
+        {{ form.as_p }}
+
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Отменить</button>
-        <button type="button" class="btn btn-primary">Подтвердить </button>
+        <button type="button submit" class="btn btn-primary">Подтвердить </button>
       </div>
+    </form>
     </div>
   </div>
 </div>
 <script>
 	$('#myModal').modal({
 	  keyboard: false
-	})
+	});
+
+    var date = new Date();
+    var term_of_usage = parseInt(document.getElementById("term-of-usage").innerHTML);
+    var end_date = new Date(date.getFullYear(), date.getMonth(), date.getDate() + term_of_usage);
+    var rates = [];
+    {%  for r in rates %}
+    rates.push([parseFloat("{{ r.value }}"), parseFloat("{{ r.rate }}")]);
+    {% endfor %}
+
+    document.getElementById("id_sum").addEventListener("change", calculateInterest);
+
+    function calculateInterest(event) {
+       max_rate = 0;
+       for (i=0;i < rates.length;i++){
+          if ((max_rate < rates[i][1])&&(rates[i][0] <= parseFloat(document.getElementById("id_sum").value))){
+            max_rate = rates[i][1]
+          }
+       }
+       document.getElementById("rate").innerHTML = max_rate
+    }
+    document.getElementById("today-date").innerHTML = date.getDate()+ "-" + (date.getMonth() + 1) + "-" + date.getFullYear(); 
+    document.getElementById("end-date").innerHTML = end_date.getDate()+ "-" + (end_date.getMonth() + 1) + "-" + end_date.getFullYear(); 
+
 </script>
 {% endblock %}
